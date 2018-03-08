@@ -100,7 +100,9 @@ void loadXmlFile(char * filename){
 		if(!strcmp((char*)cur_node->name, "User")){
 			user->email = (char *)xmlGetProp(cur_node, (xmlChar*)EMAIL);
 			user->id = (char *)xmlGetProp(cur_node, (xmlChar*)ID);
+			user->time = (char *)xmlGetProp(cur_node, (xmlChar*)TIME);
 			user->statut = (char *)xmlGetProp(cur_node, (xmlChar*)CHECK);
+
 			addUser(user);
 		}
 		cur_node = cur_node->next;
@@ -167,6 +169,9 @@ char * generateFileName(){
 	sprintf(year, "%d", ((instant.tm_year+1900) - 2000));
 
 	strcpy(filename, FINAL_FILENAME_START);
+	if(strlen(day) == 1){
+		strcat(filename, "0");
+	}
 	strcat(filename, day);
 	if(strlen(month) == 1){
 		strcat(filename, "0");
@@ -212,6 +217,16 @@ User * initUser(){
 		free(user);
 		return NULL;
 	}
+	user->time = malloc(6 * 1);
+	if(user->time == NULL){
+		printf("Erreur allocation de time ! \n");
+		free(user->email);
+		free(user->id);
+		free(user->statut);
+		free(user);
+		return NULL;
+	}
+
 	return user;
 }
 
@@ -223,6 +238,8 @@ void freeUser(User * user){
 		free(user->id);
 	if(user->statut != NULL)
 		free(user->statut);
+	if(user->time != NULL)
+		free(user->time);
 }
 
 // Fonction de verification de l'existance du dossier
@@ -310,6 +327,7 @@ xmlNodePtr addNode(){
 void addProp(User * user, xmlNodePtr node){
 	if(xmlNewProp(node, BAD_CAST ID, BAD_CAST user->id) == NULL ||
 	   xmlNewProp(node, BAD_CAST EMAIL, BAD_CAST user->email) == NULL ||
+	   xmlNewProp(node, BAD_CAST TIME, BAD_CAST user->time) == NULL ||
 	   xmlNewProp(node, BAD_CAST CHECK, BAD_CAST user->statut) == NULL){
 		printf("Erreur à l'ajout des propriétés ! \n");
 		return;

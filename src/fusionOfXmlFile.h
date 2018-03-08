@@ -22,11 +22,13 @@
 #define ID "id"
 #define EMAIL "email"
 #define CHECK "check"
+#define TIME "time"
 #define FILENAME_END ".xml"
 
 typedef struct User{
 	char * id;
 	char * email;
+	char * time;
 	char * statut;
 }User;
 
